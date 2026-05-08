@@ -1,0 +1,62 @@
+# IMNN baseline on weak gravitational lensing (Table 3 in the paper)
+#
+# Unconstrained Fisher-neural reference: strided CNN encoder + dense head
+# trained end-to-end to maximize local Gaussian Fisher information.
+# No topological structure — serves as a performance ceiling.
+#
+# Expected result: log|F| ≈ 22.35 (local), but poor transfer (8.92 on LPT).
+#
+# NOTE: requires the sbi_lens lognormal simulator (JAX dependencies).
+#   pip install jax jax-cosmo
+#   pip install git+https://github.com/DifferentiableUniverseInitiative/sbi_lens.git
+
+experiment:
+  name: lensing_imnn_bin0_seed0
+  output_dir: experiments/lensing/imnn/bin0_seed0
+
+analysis:
+  theta_fid: [0.3, 0.8]         # (Omega_m, sigma_8) fiducial
+  delta_theta: [0.02, 0.02]
+  n_s: 20000
+  n_d: 20000
+  seed_cov: 0
+  seed_ders: [1, 2]
+
+simulator:
+  type: lensing_lognormal
+  params:
+    nside: 512
+    n_bins: 5
+    bin_idx: 0                  # tomographic bin (0-4); run once per bin
+    smoothing_sigma: 2.0        # Gaussian smoothing in arcmin
+
+filtration:
+  type: imnn
+  trainable: true
+  params:
+    # Strided CNN encoder: 512x512 → 8x8 → 2-dim summary
+    channels: [16, 32, 32, 32, 16]
+    kernel_sizes: [7, 5, 3, 3, 3]
+    strides: [4, 2, 2, 2, 2]
+    dense_hidden: 128
+    n_summaries: 2              # one per parameter
+
+vectorization:
+  type: identity
+  trainable: false
+  params: {}
+
+compression:
+  type: identity
+  trainable: false
+  params: {}
+
+training:
+  n_epochs: 4000
+  lr: 5.0e-4
+  batch_size: 100
+  patience: 400
+  seed: 0
+  lambda_s: 0.10
+  lambda_k: 0.00
+  lr_scheduler: cosine

@@ -1,0 +1,11 @@
+# Learnable filtration with CNN transformation
+# Transforms N×N input fields using CNN before computing persistence
+# Fully convolutional - works with any input size, preserves dimensions
+type: learnable
+trainable: true  # Must be true for learnable filtration
+params:
+  homology_dimensions: [0, 1]
+  hidden_channels: [32, 64, 32]  # CNN architecture
+  kernel_size: 3
+  activation: relu
+  n_jobs: 1  # Sequential — GUDHI CubicalComplex is not thread-safe (segfaults)

@@ -1,0 +1,12 @@
+# Learnable Point Filtration for point clouds (Flag Complex)
+# Uses MLP to learn vertex filtration from k-nearest neighbor distances
+# Edge filtration: max(f(u), f(v)) + edge_length
+type: learnable_point
+trainable: true  # Must be true for learnable filtration
+params:
+  k: 10                      # Number of nearest neighbors
+  hidden_dims: [20, 10]          # Hidden layer dimensions (list), [] for linear
+  dropout: 0.0               # Dropout probability
+  homology_dimensions: [0, 1]
+  complex_type: alpha        # 'alpha' or 'rips'
+  p: 1.0                     # Edge filtration: (d^p + fmax^p)^(1/p)

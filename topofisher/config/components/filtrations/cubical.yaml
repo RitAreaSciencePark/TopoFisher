@@ -1,0 +1,7 @@
+# Standard cubical filtration (periodic for torus-topology fields)
+type: cubical
+trainable: false
+params:
+  homology_dimensions: [0, 1]
+  periodic: true
+  periodic: true

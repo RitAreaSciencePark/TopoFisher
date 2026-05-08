@@ -1,0 +1,58 @@
+# DTM baseline on noisy spiral point clouds (Table 1 in the paper)
+#
+# Fixed Distance-to-Measure filtration (non-learnable):
+#   vfilt(x) = sqrt( mean( kNN_distances(x)^2 ) )
+# No training needed — a single forward pass computes Fisher information.
+#
+# Expected result: log|F| ≈ 17.18 (70.1% of total) at theta_fid=(0.6, 0.1).
+
+experiment:
+  name: spiral_dtm
+  output_dir: experiments/spiral/dtm
+
+analysis:
+  theta_fid: [0.6, 0.1]
+  delta_theta: [0.05, 0.02]
+  n_s: 10000
+  n_d: 10000
+  seed_cov: 42
+  seed_ders: [43, 44]
+
+simulator:
+  type: noisy_ring
+  params:
+    N: 240
+    lam: 0.1667
+    h: 11.0
+    k: 100
+
+filtration:
+  type: alpha_dtm
+  trainable: false
+  params:
+    k: 100
+    homology_dimensions: [0, 1]
+
+vectorization:
+  type: combined
+  trainable: false
+  params:
+    layers:
+      - type: persistence_image
+        trainable: false
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence
+      - type: persistence_image
+        trainable: false
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence
+
+compression:
+  type: moped
+  trainable: false
+  params:
+    reg: 1.0e-8

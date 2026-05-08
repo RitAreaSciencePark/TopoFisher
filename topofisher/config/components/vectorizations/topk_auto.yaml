@@ -1,0 +1,9 @@
+# TopK with automatic k selection
+type: combined
+trainable: false
+params:
+  layers:
+    - type: topk
+      params: {}  # Auto-k for H0
+    - type: topk
+      params: {}  # Auto-k for H1

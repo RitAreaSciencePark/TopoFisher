@@ -1,0 +1,6 @@
+# Standard MOPED compression
+type: moped
+trainable: false
+params:
+  reg: 1.0e-8
+  clean_data: true

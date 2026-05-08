@@ -1,0 +1,7 @@
+# Noisy Ring (Circle) simulator for point clouds
+# Generates 2D point clouds with points on a noisy ring plus background
+type: noisy_ring
+params:
+  ncirc: 100    # Points on the noisy circle
+  nback: 10     # Background noise points
+  bgm_avg: 1.0  # Background mean radius

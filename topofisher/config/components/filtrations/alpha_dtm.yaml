@@ -1,0 +1,11 @@
+# Alpha DTM (Distance to Measure) Filtration for point clouds
+# Non-learnable baseline using fixed DTM formula:
+#   vfilt = sqrt(mean(knn_distances^2))
+# Edge filtration: max(f(u), f(v)) + edge_length
+type: alpha_dtm
+trainable: false  # DTM is not trainable
+params:
+  k: 10                      # Number of nearest neighbors
+  homology_dimensions: [0, 1]
+  complex_type: alpha        # 'alpha' or 'rips'
+  p: 1.0                     # Edge filtration: (d^p + fmax^p)^(1/p)

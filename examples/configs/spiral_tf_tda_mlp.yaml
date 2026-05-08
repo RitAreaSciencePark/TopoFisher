@@ -1,0 +1,71 @@
+# TF-TDA-MLP on noisy spiral point clouds (Table 1 in the paper)
+#
+# Learns a vertex filtration from k-NN distances via an MLP, builds an
+# alpha complex, computes H0/H1 persistence images, and compresses to R^2.
+#
+# Expected result: log|F| ≈ 18.99 (78.2% of total) at theta_fid=(0.6, 0.1).
+
+experiment:
+  name: spiral_tf_tda_mlp
+  output_dir: experiments/spiral/tf_tda_mlp
+
+analysis:
+  theta_fid: [0.6, 0.1]         # (mu, w): radial expansion and spiral width
+  delta_theta: [0.05, 0.02]
+  n_s: 10000
+  n_d: 10000
+  seed_cov: 42
+  seed_ders: [43, 44]
+
+simulator:
+  type: noisy_ring              # noisy spiral mixture model (see paper Sec. 4.1)
+  params:
+    N: 240                      # points per cloud
+    lam: 0.1667                 # background fraction (40/240)
+    h: 11.0                     # square half-width
+    k: 100                      # k-NN features passed to the MLP
+
+filtration:
+  type: learnable_dense_point   # MLP on k-NN distances → alpha complex filtration
+  trainable: true
+  params:
+    k: 100
+    hidden_dims: [64, 32]
+    activation: leaky_relu
+    homology_dimensions: [0, 1]
+
+vectorization:
+  type: combined
+  trainable: false
+  params:
+    layers:
+      - type: persistence_image
+        trainable: true         # differentiable PI for gradient flow
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence
+      - type: persistence_image
+        trainable: true
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence
+
+compression:
+  type: mlp
+  trainable: true
+  params:
+    output_dim: 2
+    hidden_dims: [32]
+    activation: gelu
+
+training:
+  n_epochs: 2000
+  lr: 1.0e-3
+  batch_size: 500
+  patience: 200
+  seed: 0
+  lambda_s: 0.05
+  lambda_k: 0.20
+  lr_scheduler: plateau

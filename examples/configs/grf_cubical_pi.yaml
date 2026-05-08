@@ -1,0 +1,55 @@
+# Cubical-PI baseline on Gaussian Random Fields (Table 2 in the paper)
+#
+# Fixed cubical filtration with hand-designed persistence image vectorization.
+# No training required — a deterministic pipeline that runs in a single pass.
+#
+# Expected result: log|F| ≈ 11.53 (83.0% of total) at B=0.
+
+experiment:
+  name: grf_cubical_pi_B0
+  output_dir: experiments/grf/cubical_pi_B0
+
+analysis:
+  theta_fid: [1.0, 0.0]
+  delta_theta: [0.1, 0.1]
+  n_s: 40000
+  n_d: 40000
+  seed_cov: 42
+  seed_ders: [43, 44]
+
+simulator:
+  type: grf
+  params:
+    N: 64
+    dim: 2
+
+filtration:
+  type: cubical
+  trainable: false
+  params:
+    homology_dimensions: [0, 1]
+    periodic: true
+
+vectorization:
+  type: combined
+  trainable: false
+  params:
+    layers:
+      - type: persistence_image
+        trainable: false
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence   # weight points by persistence |d - b|
+      - type: persistence_image
+        trainable: false
+        params:
+          grid_size: 8
+          bandwidth: 1.0
+          weight: persistence
+
+compression:
+  type: moped
+  trainable: false
+  params:
+    reg: 1.0e-8

@@ -1,0 +1,59 @@
+# TF-Cubical-PersLay on Gaussian Random Fields (Table 2 in the paper)
+#
+# Reproduces the best TopoFisher variant on the GRF benchmark:
+#   - Fixed cubical sublevel filtration on the raw field
+#   - Learned PersLay vectorization (trainable)
+#   - MOPED compression to 2 summaries
+#
+# Expected result: log|F| ≈ 12.63 (90.9% of total) at B=0.
+
+experiment:
+  name: grf_cubical_perslay_B0
+  output_dir: experiments/grf/cubical_perslay_B0
+
+analysis:
+  theta_fid: [1.0, 0.0]       # (A_s, B) fiducial; pivot B=0
+  delta_theta: [0.1, 0.1]     # finite-difference step sizes
+  n_s: 40000                  # samples for covariance (use fewer to prototype)
+  n_d: 40000                  # samples for derivative estimation
+  seed_cov: 42
+  seed_ders: [43, 44]
+
+simulator:
+  type: grf
+  params:
+    N: 64
+    dim: 2
+
+filtration:
+  type: cubical
+  trainable: false
+  params:
+    homology_dimensions: [0, 1]
+    periodic: true
+
+vectorization:
+  type: perslay
+  trainable: true             # PersLay weights are learned
+  params:
+    point_dim: 16             # embedding dimension per diagram point
+    hidden_dim: 32            # hidden width of the point MLP
+    post_pool_dim: 0          # no post-pooling MLP
+    spectral_norm: true       # Lipschitz control
+
+compression:
+  type: moped
+  trainable: false
+  params:
+    reg: 1.0e-8
+
+training:
+  n_epochs: 2000
+  lr: 1.0e-3
+  batch_size: 500
+  patience: 100
+  seed: 0
+  lambda_s: 0.05              # skewness regularization
+  lambda_k: 0.20              # kurtosis regularization
+  lr_scheduler: plateau
+  moped_refit_interval: 50    # refit MOPED every 50 epochs as PersLay drifts

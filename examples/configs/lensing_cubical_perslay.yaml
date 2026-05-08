@@ -1,0 +1,66 @@
+# TF-Cubical-PersLay on weak gravitational lensing (Table 3 in the paper)
+#
+# The best-generalizing TopoFisher variant for lensing:
+#   - Fixed periodic cubical filtration on the raw convergence map
+#   - Learned PersLay vectorization (only trainable component)
+#   - MOPED compression to 2 summaries
+#
+# Expected: log|F| ≈ 21.51 (local), 19.24 (transfer to LPT), 16.72 (NPE).
+# Run independently for each of the 5 tomographic bins (bin_idx: 0..4).
+#
+# NOTE: requires the sbi_lens lognormal simulator (JAX dependencies).
+#   pip install jax jax-cosmo
+#   pip install git+https://github.com/DifferentiableUniverseInitiative/sbi_lens.git
+
+experiment:
+  name: lensing_cubical_perslay_bin0_seed0
+  output_dir: experiments/lensing/cubical_perslay/bin0_seed0
+
+analysis:
+  theta_fid: [0.3, 0.8]         # (Omega_m, sigma_8) fiducial
+  delta_theta: [0.02, 0.02]
+  n_s: 20000
+  n_d: 20000
+  seed_cov: 0
+  seed_ders: [1, 2]
+
+simulator:
+  type: lensing_lognormal
+  params:
+    nside: 512
+    n_bins: 5
+    bin_idx: 0                  # tomographic bin (0-4)
+    smoothing_sigma: 2.0        # Gaussian smoothing in arcmin
+
+filtration:
+  type: cubical
+  trainable: false
+  params:
+    homology_dimensions: [0, 1]
+    periodic: true              # periodic boundary conditions
+
+vectorization:
+  type: perslay
+  trainable: true
+  params:
+    point_dim: 16
+    hidden_dim: 32
+    post_pool_dim: 0
+    spectral_norm: true
+
+compression:
+  type: moped
+  trainable: false
+  params:
+    reg: 1.0e-8
+
+training:
+  n_epochs: 2000
+  lr: 1.0e-3
+  batch_size: 50
+  patience: 100
+  seed: 0
+  lambda_s: 0.05
+  lambda_k: 0.20
+  lr_scheduler: plateau
+  moped_refit_interval: 50

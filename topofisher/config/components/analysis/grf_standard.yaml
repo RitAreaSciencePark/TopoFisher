@@ -1,0 +1,6 @@
+theta_fid: [1.0, 2.0]
+delta_theta: [0.1, 0.2]
+n_s: 10000
+n_d: 10000
+seed_cov: 42
+seed_ders: [43, 44]

@@ -1,0 +1,6 @@
+# Standard GRF simulator configuration
+type: grf
+params:
+  N: 16
+  dim: 2
+  k_pivot: auto

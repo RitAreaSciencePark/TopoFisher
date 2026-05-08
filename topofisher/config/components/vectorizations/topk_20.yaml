@@ -1,0 +1,12 @@
+# TopK with fixed k=20
+type: combined
+trainable: false
+params:
+  layers:
+    - type: topk
+      params:
+        k: 20
+    - type: topk
+      params:
+        k: 20
+        k: 20

@@ -1,0 +1,20 @@
+n_epochs: 1000
+lr: 1.0e-3
+batch_size: 500
+weight_decay: 1.0e-4
+train_frac: 0.875
+val_frac: 0.0625
+validate_every: 10
+verbose: true
+patience: 50
+min_delta: 1.0e-6
+lambda_k: 0.0  # Kurtosis regularization (0 = disabled)
+lambda_s: 0.0  # Skewness regularization (0 = disabled)
+
+# Stability improvements for CNN training
+grad_clip: 1.0        # Gradient clipping max norm (null = disabled)
+lr_scheduler: plateau # "plateau", "cosine", or "none"
+lr_patience: 20       # Patience for ReduceLROnPlateau
+lr_factor: 0.5        # Factor for ReduceLROnPlateau  
+lr_min: 1.0e-6        # Minimum learning rate
+seed: 42
