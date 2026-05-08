@@ -4,7 +4,7 @@ Code for the paper:
 
 > **TopoFisher: Learning Topological Summary Statistics by Maximizing Fisher Information**  
 > Matteo Biagetti, Mathieu Carrière, Francesco Conti, Enrico Maria Ferrari, Sven C. Heydenreich, Karthik Viswanathan  
-> Preprint, 2025
+> Preprint, 2026
 
 TopoFisher is a differentiable persistent-homology pipeline that learns topological summary statistics for simulation-based inference. It optimizes filtrations, diagram vectorizations, and compressors by maximizing local Gaussian Fisher information — no posterior samples or supervised regression targets required.
 
