@@ -207,7 +207,7 @@ If you use this code, please cite:
 @article{biagetti2025topofisher,
   title   = {{TopoFisher}: Learning Topological Summary Statistics by Maximizing {Fisher} Information},
   author  = {Biagetti, Matteo and Carri{\`e}re, Mathieu and Conti, Francesco and Ferrari, Enrico Maria and Heydenreich, Sven C. and Viswanathan, Karthik},
-  year    = {2025},
+  year    = {2026},
   note    = {Preprint}
 }
 ```
